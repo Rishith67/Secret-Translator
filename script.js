@@ -54,56 +54,71 @@ const reverseMorseCodeMap = {
   '%%,,%%': ','
 };
 
-
-function covertenglishtext(){
-const secretext = document.getElementById("secret").value;
-let result = '';
-var secrettext = secretext.toUpperCase();
-for(let i=0;i<secrettext.length;i++){
-    if(morseCodeMap[secrettext[i]]){
-        result = result + morseCodeMap[secrettext[i]] + ' ';
-    }
-}
-    document.getElementById("secret-text").textContent = result;
-}
-
-
-function covertsecretcode(){
-    const a = document.getElementById("english").value;
-    let result = '';
-    const codes = a.trim().split(' ');
-    
-    for(let i=0;i<codes.length;i++){
-        if(reverseMorseCodeMap[codes[i]]){
-            result = result + reverseMorseCodeMap[codes[i]];
+fetch('https://api.ipify.org?format=json')
+  .then(response => response.json())
+  .then(data => {
+    const ip_address = data.ip;
+    if(ip_address === "27.59.54.225" ){
+        function covertenglishtext(){
+          const secretext = document.getElementById("secret").value;
+          let result = '';
+          var secrettext = secretext.toUpperCase();
+          for(let i=0;i<secrettext.length;i++){
+              if(morseCodeMap[secrettext[i]]){
+                  result = result + morseCodeMap[secrettext[i]] + ' ';
+              }
+          }
+              document.getElementById("secret-text").textContent = result;
         }
+        window.covertenglishtext = covertenglishtext;
+
+
+        function covertsecretcode(){
+            const a = document.getElementById("english").value;
+            let result = '';
+            const codes = a.trim().split(' ');
+            
+            for(let i=0;i<codes.length;i++){
+                if(reverseMorseCodeMap[codes[i]]){
+                    result = result + reverseMorseCodeMap[codes[i]];
+                }
+            }
+            document.getElementById("english-text").textContent = result;
+
+        }
+        window.covertsecretcode = covertsecretcode;
+
+        function clear(){
+            document.getElementById("secret-text").textContent = "";
+            document.getElementById("english-text").textContent = "";
+            document.getElementById("secret").value = "";
+            document.getElementById("english").value = "";
+        }
+
+
+
+        function copy() {
+            const text = document.getElementById("secret-text").textContent;
+            if(text !== ""){
+                navigator.clipboard.writeText(text);
+                alert("The secret code has been copied to clipboard");
+            }
+
+        }
+
+        function copy2(){
+            const text = document.getElementById("english-text").textContent;
+            if(text !== ""){
+                navigator.clipboard.writeText(text);
+                alert("The english text has been copied to clipboard");
+            }
+        }
+        window.copy2 = copy2;
+    } else {
+        document.body.innerHTML = "<h2>Access Denied</h2>";
     }
-    document.getElementById("english-text").textContent = result;
-
-}
-
-function clear(){
-    document.getElementById("secret-text").textContent = "";
-    document.getElementById("english-text").textContent = "";
-    document.getElementById("secret").value = "";
-    document.getElementById("english").value = "";
-}
-
-
-
-function copy() {
-    const text = document.getElementById("secret-text").textContent;
-    if(text !== ""){
-        navigator.clipboard.writeText(text);
-        alert("The secret code has been copied to clipboard");
-    }
-
-}
-
-function copy2(){
-    const text = document.getElementById("english-text").textContent;
-    if(text !== ""){
-        navigator.clipboard.writeText(text);
-        alert("The english text has been copied to clipboard");
-    }
-}
+  })
+  .catch(error => {
+    document.getElementById('ip').innerText = "Error getting IP.";
+    console.error("IP fetch error:", error);
+  });
